@@ -269,6 +269,7 @@ class Duration(object):
       represent the exact Duration value. For example: "1s", "1.010s",
       "1.000000100s", "-3.100s"
     """
+    # type: () -> six.text_type
     _CheckDurationValid(self.seconds, self.nanos)
     if self.seconds < 0 or self.nanos < 0:
       result = '-'
@@ -303,6 +304,7 @@ class Duration(object):
     Raises:
       ValueError: On parsing problems.
     """
+    # type: (six.text_type) -> None
     if len(value) < 1 or value[-1] != 's':
       raise ValueError(
           'Duration must end with letter "s": {0}.'.format(value))
@@ -326,57 +328,68 @@ class Duration(object):
 
   def ToNanoseconds(self):
     """Converts a Duration to nanoseconds."""
+    # type: () -> int
     return self.seconds * _NANOS_PER_SECOND + self.nanos
 
   def ToMicroseconds(self):
     """Converts a Duration to microseconds."""
+    # type: () -> int
     micros = _RoundTowardZero(self.nanos, _NANOS_PER_MICROSECOND)
     return self.seconds * _MICROS_PER_SECOND + micros
 
   def ToMilliseconds(self):
     """Converts a Duration to milliseconds."""
+    # type: () -> int
     millis = _RoundTowardZero(self.nanos, _NANOS_PER_MILLISECOND)
     return self.seconds * _MILLIS_PER_SECOND + millis
 
   def ToSeconds(self):
     """Converts a Duration to seconds."""
+    # type: () -> int
     return self.seconds
 
   def FromNanoseconds(self, nanos):
     """Converts nanoseconds to Duration."""
+    # type: (int) -> None
     self._NormalizeDuration(nanos // _NANOS_PER_SECOND,
                             nanos % _NANOS_PER_SECOND)
 
   def FromMicroseconds(self, micros):
     """Converts microseconds to Duration."""
+    # type: (int) -> None
     self._NormalizeDuration(
         micros // _MICROS_PER_SECOND,
         (micros % _MICROS_PER_SECOND) * _NANOS_PER_MICROSECOND)
 
   def FromMilliseconds(self, millis):
     """Converts milliseconds to Duration."""
+    # type: (int) -> None
     self._NormalizeDuration(
         millis // _MILLIS_PER_SECOND,
         (millis % _MILLIS_PER_SECOND) * _NANOS_PER_MILLISECOND)
 
   def FromSeconds(self, seconds):
     """Converts seconds to Duration."""
+    # type: (int) -> None
     self.seconds = seconds
     self.nanos = 0
 
   def ToTimedelta(self):
     """Converts Duration to timedelta."""
+    # type: () -> timedelta
     return timedelta(
         seconds=self.seconds, microseconds=_RoundTowardZero(
             self.nanos, _NANOS_PER_MICROSECOND))
 
   def FromTimedelta(self, td):
     """Converts timedelta to Duration."""
+    # type: (timedelta) -> None
     self._NormalizeDuration(td.seconds + td.days * _SECONDS_PER_DAY,
                             td.microseconds * _NANOS_PER_MICROSECOND)
 
   def _NormalizeDuration(self, seconds, nanos):
     """Set Duration by seconds and nanos."""
+    # type: (int, int) -> None
     # Force nanos to be negative if the duration is negative.
     if seconds < 0 and nanos > 0:
       seconds += 1
